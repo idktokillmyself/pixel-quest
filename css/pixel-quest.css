@@ -876,3 +876,17 @@ html, body {
 
 
 
+
+/* Продлеваем фон таб-бара в safe-area снизу */
+body::after {
+    content: '';
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: env(safe-area-inset-bottom, 0px);
+    background: #05050f;
+    border-top: 3px solid #4a1a7a;
+    z-index: 9999;
+    pointer-events: none;
+}
