@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a1e">
+    <title>Pixel Quest ⚔️</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/pixel-quest.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ЭКРАН ЗАГРУЗКИ -->
+<div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+        <div class="splash-logo">⚔️</div>
+        <h1 class="pixel-title">PIXEL QUEST</h1>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <p class="pixel-text-small">Загрузка гильдии...</p>
+    </div>
+</div>
+
+<!-- LEVEL UP -->
+<div id="levelup-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content levelup-content">
+        <div class="levelup-icon">🎉</div>
+        <h2 class="pixel-text-big">LEVEL UP!</h2>
+        <p class="pixel-text-small" style="margin:10px 0;">Ты стала сильнее!</p>
+        <div class="levelup-stats">
+            <div class="stat-row"><span>❤️ HP</span><span class="stat-value">+10</span></div>
+            <div class="stat-row"><span>💎 MP</span><span class="stat-value">+5</span></div>
+            <div class="stat-row"><span>⚡ ATK</span><span class="stat-value">+2</span></div>
+        </div>
+        <button id="levelup-close" class="pixel-button pixel-button-yellow">ПОЛУЧИТЬ НАГРАДУ</button>
+    </div>
+</div>
+
+<!-- СУНДУК -->
+<div id="chest-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content chest-content">
+        <!-- ЭТАП 1: СУНДУК -->
+        <div id="chest-stage">
+            <h2 class="pixel-text-medium" style="color:#ffd700;margin-bottom:15px;">🎁 СУНДУК!</h2>
+            <p class="pixel-text-small" style="color:#aaa;margin-bottom:20px;">
+                Ты выполнил 10 квестов!<br>Открой сундук и узнай награду
+            </p>
+            <div class="chest-sprite" id="chest-sprite">
+                <img src="assets/chest.png" alt="Chest"
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="chest-fallback" style="display:none;">🎁</div>
+            </div>
+            <button id="chest-open-btn" class="pixel-button pixel-button-yellow" style="margin-top:20px;">
+                ОТКРЫТЬ СУНДУК
+            </button>
+        </div>
+        
+        <!-- ЭТАП 2: НАГРАДА -->
+        <div id="reward-stage" style="display:none;">
+            <h2 class="pixel-text-medium" style="color:#ffd700;margin-bottom:15px;">✨ НАГРАДА ✨</h2>
+            <div id="reward-content"></div>
+            <button id="reward-close-btn" class="pixel-button pixel-button-yellow" style="margin-top:20px;">
+                ЗАБРАТЬ
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- СОЗДАНИЕ КВЕСТА -->
+<div id="add-quest-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+        <h2 class="pixel-text-medium" style="color:#ffd700;margin-bottom:15px;">📜 НОВЫЙ КВЕСТ</h2>
+        
+        <label class="pixel-text-tiny" style="display:block;text-align:left;margin-bottom:5px;">НАЗВАНИЕ</label>
+        <input type="text" id="modal-quest-title" class="pixel-input" 
+               placeholder="Победить дракона..." maxlength="80" style="width:100%;margin-bottom:15px;">
+        
+        <label class="pixel-text-tiny" style="display:block;text-align:left;margin-bottom:5px;">
+            НАГРАДА: <span id="modal-xp-value" style="color:#ffd700;">20</span> XP
+        </label>
+        <input type="range" id="modal-quest-xp" class="pixel-slider" 
+               min="5" max="100" value="20" step="5" style="width:100%;margin-bottom:5px;">
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:#888;margin-bottom:20px;">
+            <span>5</span><span>50</span><span>100</span>
+        </div>
+        
+        <div style="display:flex;gap:10px;">
+            <button id="modal-cancel" class="pixel-button" style="flex:1;background:#444;color:#fff;box-shadow:0 4px 0 #222;">ОТМЕНА</button>
+            <button id="modal-confirm" class="pixel-button pixel-button-yellow" style="flex:2;">СОЗДАТЬ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ОСНОВНОЙ ИНТЕРФЕЙС -->
+<div id="main-interface" class="main-interface" style="display:none;">
+
+    <header class="game-header">
+        <div class="hero-info">
+            <div class="hero-avatar" id="hero-avatar" title="Тапни, чтобы сменить аватарку">
+                <img id="hero-avatar-img" src="assets/mascot/avatar.png" alt="Hero">
+                <div class="fallback-avatar" style="display:none;">⚔️</div>
+                <div class="avatar-edit-hint">📷</div>
+            </div>
+            <input type="file" id="avatar-upload" accept="image/*" style="display:none;">
+            <div class="hero-details">
+                <h2 class="hero-name pixel-text-medium" id="hero-name">2B</h2>
+                <div class="level-badge">
+                    <span class="pixel-text-small">Ур.</span>
+                    <span id="hero-level" class="pixel-text-medium">1</span>
+                </div>
+            </div>
+        </div>
+        <div class="exp-bar-container">
+            <div class="exp-bar"><div id="exp-fill" class="exp-fill" style="width:0%"></div></div>
+            <span class="pixel-text-tiny" id="exp-text">0/100 EXP</span>
+        </div>
+    </header>
+
+    <main class="game-content">
+
+        <!-- ТАБ 1: ГЕРОЙ -->
+        <div id="tab-hero" class="tab-content active">
+            <div class="hero-scene">
+                <div class="character-sprite" id="character-sprite">
+                    <img id="mascot-img" src="assets/mascot/idle.png" alt="Hero"
+                         onerror="this.style.display='none';document.getElementById('mascot-fallback').style.display='flex';">
+                    <div id="mascot-fallback" class="mascot-fallback" style="display:none;">⚔️</div>
+                </div>
+                
+                <div class="speech-bubble" id="speech-bubble">
+                    <p id="speech-text" class="pixel-text-small">Пора за квесты!</p>
+                </div>
+                
+                <canvas id="particles-canvas" class="particles-canvas"></canvas>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <span class="pixel-text-tiny">КВЕСТЫ</span>
+                    <span class="pixel-text-big" id="quests-completed">0/0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="pixel-text-tiny">ПРОГРЕСС</span>
+                    <span class="pixel-text-big" id="progress-percent">0%</span>
+                </div>
+                <div class="stat-card">
+                    <span class="pixel-text-tiny">ОПЫТ</span>
+                    <span class="pixel-text-big" id="total-exp">0</span>
+                </div>
+            </div>
+
+            <button class="pixel-button pixel-button-yellow" id="hero-quick-add" 
+                    style="width:100%;margin-top:15px;">
+                ➕ БЫСТРО ДОБАВИТЬ КВЕСТ
+            </button>
+            
+            <h3 class="pixel-text-small" style="color:#ffd700;margin:20px 0 10px;">🔥 АКТИВНЫЕ КВЕСТЫ</h3>
+            <div id="hero-active-quests" class="quests-list"></div>
+        </div>
+
+        <!-- ТАБ 2: КВЕСТЫ -->
+        <div id="tab-quests" class="tab-content">
+            <button id="quest-add-btn" class="pixel-button pixel-button-yellow" 
+                    style="width:100%;margin-bottom:20px;">
+                ➕ СОЗДАТЬ НОВЫЙ КВЕСТ
+            </button>
+            
+            <div class="quest-filters">
+                <button class="pixel-button-small active" data-filter="all">ВСЕ</button>
+                <button class="pixel-button-small" data-filter="active">АКТИВНЫЕ</button>
+                <button class="pixel-button-small" data-filter="completed">ВЫПОЛНЕНЫ</button>
+            </div>
+            
+            <div id="quests-list" class="quests-list"></div>
+            
+            <button id="clear-completed-btn" class="pixel-button pixel-button-red" 
+                    style="display:none;width:100%;margin-top:20px;">
+                🗑️ ОЧИСТИТЬ ВЫПОЛНЕННЫЕ
+            </button>
+        </div>
+
+        <!-- ТАБ 3: КАСТОМИЗАЦИЯ -->
+        <div id="tab-customize" class="tab-content">
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">⚔️ ИМЯ ГЕРОЯ</h3>
+                <input type="text" id="hero-name-input" class="pixel-input" 
+                       maxlength="12" placeholder="2B" style="width:100%;">
+            </div>
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">🖼️ СВОЙ МАСКОТ</h3>
+                <p class="pixel-text-tiny" style="color:#888;margin-bottom:10px;">
+                    Загрузи свой PNG (до 2 МБ) — он заменит картинку героя
+                </p>
+                <input type="file" id="custom-mascot-upload" accept="image/png,image/jpeg,image/webp" style="display:none;">
+                <button class="pixel-button pixel-button-yellow" id="upload-mascot-btn" style="width:100%;margin-bottom:10px;">
+                    📁 ЗАГРУЗИТЬ PNG
+                </button>
+                <button class="pixel-button pixel-button-red" id="remove-custom-mascot-btn" style="width:100%;display:none;">
+                    🗑️ УБРАТЬ СВОЙ PNG
+                </button>
+            </div>
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">🏰 ЛОКАЦИЯ</h3>
+                <p class="pixel-text-tiny" style="color:#888;margin-bottom:10px;">
+                    Новые локации выпадают из сундуков
+                </p>
+                <div class="location-grid" id="location-grid"></div>
+            </div>
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">🏆 МОИ МЕДАЛИ (<span id="medals-count">0</span>)</h3>
+                <div class="medals-grid" id="medals-grid"></div>
+            </div>
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">🔊 ЗВУКИ</h3>
+                <div class="toggle-row">
+                    <span class="pixel-text-small">Звуковые эффекты</span>
+                    <label class="pixel-switch">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="pixel-slider-toggle"></span>
+                    </label>
+                </div>
+                <button class="pixel-button-small" id="test-sound-btn" style="width:100%;margin-top:10px;">
+                    🎵 ПРОВЕРИТЬ ЗВУК
+                </button>
+            </div>
+
+            <div class="customize-section">
+                <h3 class="pixel-text-medium section-title">⚙️ ОПАСНАЯ ЗОНА</h3>
+                <button class="pixel-button pixel-button-red" id="reset-btn" style="width:100%;">
+                    🗑️ СБРОСИТЬ ВСЕ ДАННЫЕ
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <nav class="tab-bar">
+        <button class="tab-button active" data-tab="hero">
+            <span class="tab-icon">⚔️</span>
+            <span class="tab-label pixel-text-tiny">ГЕРОЙ</span>
+        </button>
+        <button class="tab-button" data-tab="quests">
+            <span class="tab-icon">📜</span>
+            <span class="tab-label pixel-text-tiny">КВЕСТЫ</span>
+        </button>
+        <button class="tab-button" data-tab="customize">
+            <span class="tab-icon">🎨</span>
+            <span class="tab-label pixel-text-tiny">СТИЛЬ</span>
+        </button>
+    </nav>
+</div>
+
+<script src="js/soundEngine.js"></script>
+<script src="js/medals.js"></script>
+<script src="js/mascot.js"></script>
+<script src="js/dataManager.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/app.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(()=>{});
+        });
+    }
+</script>
+</body>
+</html>
