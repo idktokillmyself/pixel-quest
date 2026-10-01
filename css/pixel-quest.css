@@ -13,13 +13,15 @@
 }
 
 html, body {
-    height: 100%;
+    margin: 0;
+    padding: 0;
     width: 100%;
+    height: 100%;
     overflow: hidden;
     background: #05050f;
     font-family: 'Press Start 2P', 'Courier New', monospace;
     color: #fff;
-    overscroll-behavior: none;
+    -webkit-font-smoothing: none;
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -34,14 +36,14 @@ html, body {
 
 /* КОРНЕВОЙ КОНТЕЙНЕР */
 #app, .pixel-app, .main-interface {
-    width: 100%;
-    max-width: 100%;
-    height: 100vh;
-    height: 100dvh;
-    height: 100svh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     flex-direction: column;
-    position: relative;
+    overflow: hidden;
     background: transparent;
 }
 
@@ -132,9 +134,9 @@ html, body {
 
 /* ШАПКА */
 .game-header {
+    flex-shrink: 0;
     padding: 10px 12px;
     padding-top: calc(10px + env(safe-area-inset-top, 0px));
-    flex-shrink: 0;
     background: linear-gradient(180deg, #1a1a3e, #0f0f22);
     border-bottom: 3px solid #4a1a7a;
 }
@@ -241,7 +243,7 @@ html, body {
 
 /* КОНТЕНТ */
 .game-content {
-    flex: 1;
+    flex: 1 1 0%;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
@@ -718,15 +720,12 @@ html, body {
 
 /* ТАБ-БАР */
 .tab-bar {
+    flex-shrink: 0;
     display: flex;
     background: #05050f;
     border-top: 3px solid #4a1a7a;
     padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px;
     gap: 6px;
-    flex-shrink: 0;
-    z-index: 50;
-    max-width: 100%;
-    box-sizing: border-box;
 }
 
 .tab-button {

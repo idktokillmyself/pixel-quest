@@ -4,6 +4,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let DM;
 
+
+// Диагностика размеров (можно потом убрать)
+setTimeout(() => {
+    const m = document.querySelector('.main-interface');
+    const t = document.querySelector('.tab-bar');
+    const c = document.querySelector('.game-content');
+    const h = document.querySelector('.game-header');
+    if (!m || !t || !c || !h) return;
+    
+    console.log('[DIAG] window.innerHeight:', window.innerHeight);
+    console.log('[DIAG] document.documentElement.clientHeight:', document.documentElement.clientHeight);
+    console.log('[DIAG] body clientHeight:', document.body.clientHeight);
+    console.log('[DIAG] .main-interface rect:', m.getBoundingClientRect());
+    console.log('[DIAG] .game-header rect:', h.getBoundingClientRect());
+    console.log('[DIAG] .game-content rect:', c.getBoundingClientRect());
+    console.log('[DIAG] .tab-bar rect:', t.getBoundingClientRect());
+    console.log('[DIAG] .tab-bar computed padding-bottom:', getComputedStyle(t).paddingBottom);
+    console.log('[DIAG] .tab-bar computed position:', getComputedStyle(t).position);
+    console.log('[DIAG] env(safe-area-inset-bottom) test:', getComputedStyle(t).paddingBottom);
+}, 2000);
+
 function initApp() {
     DM = new DataManager();
     window.dataManager = DM;
