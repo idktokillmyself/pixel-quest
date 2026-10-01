@@ -858,136 +858,117 @@ html, body {
     opacity: 0.85;
     border-radius: 2px;
 }
-
 /* ============================================
-   v6: АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ (iOS/Android)
+   v7: АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ (iOS/Android)
    ============================================ */
 
-/* ГЛАВНОЕ: правильный размер и safe-area */
-html {
+/* Базовые настройки — БЕЗ safe-area на body, чтобы не дублировать */
+html, body {
     height: 100%;
-    height: -webkit-fill-available;
-}
-
-body {
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    /* Safe-area: избегаем вырезов iPhone */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    background: #05050f;
+    width: 100%;
     overflow: hidden;
+    background: #05050f;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: none;
 }
 
-/* Основной интерфейс — растягивается на весь экран */
-.main-interface {
+/* Основной контейнер приложения */
+#app, .pixel-app, .main-interface {
     width: 100%;
     max-width: 100%;
     height: 100vh;
-    height: 100dvh; /* динамическая высота для iOS 15.4+ */
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    background: transparent;
 }
 
-/* На десктопе — ограничиваем ширину, чтобы выглядело как телефон */
+/* На больших экранах — центрируем как "телефон" */
 @media (min-width: 500px) {
     #app, .pixel-app, .main-interface {
-        max-width: 480px;
+        max-width: 420px;
         margin: 0 auto;
         border-left: 1px solid #1a1a3e;
         border-right: 1px solid #1a1a3e;
         box-shadow: 0 0 60px rgba(102, 0, 255, 0.4);
     }
     body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: #05050f;
     }
 }
 
-/* Шапка — компактнее, учитываем статус-бар */
+/* ШАПКА — единственное место с safe-area-top */
 .game-header {
-    padding: 8px 10px;
-    padding-top: calc(8px + env(safe-area-inset-top));
+    padding: 10px 12px;
+    padding-top: max(10px, env(safe-area-inset-top));
     flex-shrink: 0;
+    background: linear-gradient(180deg, #1a1a3e, #0f0f22);
+    border-bottom: 3px solid #4a1a7a;
 }
 
-/* Контент скроллится */
+/* КОНТЕНТ — скроллится, БЕЗ safe-area */
 .game-content {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 10px;
     -webkit-overflow-scrolling: touch;
+    min-height: 0; /* важно для flex-скролла */
 }
 
-/* Таб-бар — учитываем домашний индикатор iPhone */
-.tab-bar {
-    padding: 6px 8px;
-    padding-bottom: calc(6px + env(safe-area-inset-bottom));
-    flex-shrink: 0;
-}
-
-/* Сцена с маскотом — адаптивная высота */
+/* СЦЕНА — адаптивная, но с минимумом */
 .hero-scene {
-    height: 220px;
-    max-height: 32vh;
+    height: clamp(180px, 30vh, 260px);
+    position: relative;
 }
 
-/* Маскот — по центру, не выходит за пределы */
+/* МАСКОТ — по центру сцены, с учётом пропорций */
 .character-sprite {
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
-    max-width: 90%;
+    max-width: 80%;
     display: flex;
     justify-content: center;
     align-items: flex-end;
+    pointer-events: none;
 }
 
 .character-sprite img {
-    max-height: 150px;
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
     width: auto;
-    max-width: 100%;
     image-rendering: pixelated;
-    /* Убираем серый фон с помощью blend-mode */
-    mix-blend-mode: lighten;
-    filter: contrast(1.1) saturate(1.05) drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    /* Убираем серый фон: он светлый, персонаж тёмный */
+    mix-blend-mode: darken;
+    filter: contrast(1.05) drop-shadow(0 4px 10px rgba(0,0,0,0.7));
 }
 
-/* Fallback для браузеров без blend-mode */
-@supports not (mix-blend-mode: lighten) {
-    .character-sprite img {
-        mix-blend-mode: normal;
-    }
+/* ТАБ-БАР — единственное место с safe-area-bottom */
+.tab-bar {
+    padding: 8px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+    flex-shrink: 0;
+    background: #05050f;
+    border-top: 3px solid #4a1a7a;
 }
 
-/* Статы — 3 колонки, компактнее на узких экранах */
-.quick-stats {
-    gap: 6px;
-}
-
-.stat-card {
-    padding: 8px 4px;
-    min-width: 0; /* чтобы не выпирало */
-}
-
-.stat-card .pixel-text-big {
-    font-size: 14px;
-}
-
-/* Кнопки — на всю ширину, но с отступами */
-.pixel-button {
-    max-width: 100%;
-    word-wrap: break-word;
-}
-
-/* Модалки — центрируем и добавляем safe-area */
+/* Модалки — учитываем safe-area со всех сторон */
 .modal-overlay {
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    padding: 
+        max(20px, env(safe-area-inset-top))
+        max(20px, env(safe-area-inset-right))
+        max(20px, env(safe-area-inset-bottom))
+        max(20px, env(safe-area-inset-left));
 }
 
 .modal-content {
@@ -996,58 +977,39 @@ body {
     overflow-y: auto;
 }
 
-/* Список квестов — превью на узких экранах */
-.quest-card-header {
-    gap: 8px;
-}
-
-.quest-title {
-    font-size: 9px;
-    line-height: 1.4;
-    word-break: break-word;
-    min-width: 0;
-}
-
-.quest-exp {
-    font-size: 7px;
-    padding: 2px 4px;
-    white-space: nowrap;
-}
-
-/* Облачко речи — компактнее */
-.speech-bubble {
-    top: 6px;
-    left: 8px;
-    right: 8px;
-    padding: 8px 10px;
-}
-
-.speech-bubble .pixel-text-small {
-    font-size: 9px;
-}
-
-/* ===== ОЧЕНЬ УЗКИЕ ЭКРАНЫ (iPhone SE и т.п.) ===== */
-@media (max-width: 360px) {
+/* Мелкие правки на узких экранах */
+@media (max-width: 380px) {
     .pixel-text-tiny { font-size: 7px; }
     .pixel-text-small { font-size: 9px; }
     .pixel-text-medium { font-size: 11px; }
-    .pixel-text-big { font-size: 16px; }
+    .pixel-text-big { font-size: 15px; }
     
-    .hero-scene { height: 180px; }
-    .character-sprite img { max-height: 120px; }
+    .stat-card { padding: 6px 3px; }
+    .stat-card .pixel-text-big { font-size: 13px; }
     
-    .stat-card .pixel-text-big { font-size: 12px; }
+    .quest-title { font-size: 8px; }
+    .quest-exp { font-size: 6px; padding: 2px 3px; }
 }
 
-/* ===== ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ ===== */
+/* Очень узкие экраны (iPhone SE) */
+@media (max-width: 340px) {
+    .hero-scene { height: 160px; }
+    .character-sprite img { max-height: 130px; }
+    .quests-list { gap: 6px; }
+    .quest-card { padding: 8px; }
+}
+
+/* Горизонтальная ориентация */
 @media (orientation: landscape) and (max-height: 500px) {
-    .game-header {
-        padding: 4px 10px;
-    }
-    .hero-scene { height: 140px; }
+    .game-header { padding: 4px 12px; padding-top: max(4px, env(safe-area-inset-top)); }
+    .hero-scene { height: 120px; }
     .character-sprite img { max-height: 100px; }
-    .quick-stats {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    .quick-stats { grid-template-columns: repeat(3, 1fr); }
+    .tab-bar { padding: 4px; padding-bottom: max(4px, env(safe-area-inset-bottom)); }
+    .game-content { padding: 6px; }
 }
 
+/* Скроллбар — тонкий, тёмный */
+.game-content::-webkit-scrollbar { width: 4px; }
+.game-content::-webkit-scrollbar-track { background: transparent; }
+.game-content::-webkit-scrollbar-thumb { background: #4a1a7a; }
