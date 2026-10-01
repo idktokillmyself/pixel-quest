@@ -719,13 +719,17 @@ html, body {
 
 /* ТАБ-БАР */
 .tab-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     background: #05050f;
     border-top: 3px solid #4a1a7a;
     padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)) 8px;
     gap: 6px;
-    flex-shrink: 0;
-    box-sizing: border-box;
+    z-index: 50;
+    max-width: 100%;
 }
 
 .tab-button {
@@ -870,4 +874,28 @@ html, body {
     .quick-stats { grid-template-columns: repeat(3, 1fr); }
     .tab-bar     { padding: 4px; padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
     .game-content { padding: 6px; }
+}
+
+
+/* Десктоп: фиксируем таб-бар в тех же 420px */
+@media (min-width: 500px) {
+    .tab-bar {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: 420px;
+        width: 100%;
+    }
+}
+
+/* Контенту — отступ снизу, чтобы не залезал под бар */
+.game-content {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.main-interface {
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
