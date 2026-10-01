@@ -4,14 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let DM;
 
-// Точная высота экрана для iOS Safari
-function setAppHeight() {
-    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
-}
-setAppHeight();
-window.addEventListener('resize', setAppHeight);
-window.addEventListener('orientationchange', () => setTimeout(setAppHeight, 200));
-
 function initApp() {
     DM = new DataManager();
     window.dataManager = DM;
