@@ -38,3 +38,30 @@ Pixel Quest — это трекер задач, стилизованный по�
 git clone https://github.com/idktokillmyself/pixel-quest.git
 cd pixel-quest
 python3 -m http.server 8080
+```
+## Как установить на iPhone
+
+Открой https://idktokillmyself.github.io/pixel-quest/ в Safari
+
+Нажми Поделиться → На экран «Домой»
+
+Открой с иконки — приложение работает оффлайн
+
+Структура проекта
+```
+pixel-quest/
+├── index.html          — главная страница
+├── manifest.json       — PWA-манифест
+├── sw.js               — Service Worker
+├── css/
+│   └── pixel-quest.css — стили
+├── js/
+│   ├── app.js          — логика приложения
+│   ├── dataManager.js  — сохранение данных
+│   ├── mascot.js       — рендер маскота
+│   ├── soundEngine.js  — 8-битные звуки
+│   ├── animations.js   — анимации и частицы
+│   └── medals.js       — пул наград
+└── assets/
+    ├── mascot/         — PNG маскота
+    └── backgrounds/    — фоны локаций
