@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'pixel-quest-v9';
+const CACHE_VERSION = 'pixel-quest-v10';
 const urlsToCache = [
     './',
     './index.html',

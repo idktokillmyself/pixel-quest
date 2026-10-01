@@ -1,7 +1,5 @@
-// ============================================
 // PIXEL QUEST - 8-BIT SOUND ENGINE
 // Генерирует ретро-звуки через Web Audio API
-// ============================================
 
 class SoundEngine {
     constructor() {

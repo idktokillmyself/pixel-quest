@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let DM;
 
+// Точная высота экрана для iOS Safari
+function setAppHeight() {
+    document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
+}
+setAppHeight();
+window.addEventListener('resize', setAppHeight);
+window.addEventListener('orientationchange', () => setTimeout(setAppHeight, 200));
+
 function initApp() {
     DM = new DataManager();
     window.dataManager = DM;
@@ -25,9 +33,7 @@ function initApp() {
     updateUI();
 }
 
-// ============================================
 // МАСКОТ
-// ============================================
 function renderMascot(state = null) {
     if (state) window.mascot.setState(state);
     const img = document.getElementById('mascot-img');
@@ -49,10 +55,7 @@ function renderMascot(state = null) {
     avatarImg.src = avatarSrc;
 }
 
-
-// ============================================
 // АВАТАРКА В ШАПКЕ
-// ============================================
 function setupAvatarPicker() {
     const avatarEl = document.getElementById('hero-avatar');
     const fileInput = document.getElementById('avatar-upload');
@@ -116,9 +119,7 @@ function setupAvatarPicker() {
     });
 }
 
-// ============================================
 // НАВИГАЦИЯ
-// ============================================
 function setupTabs() {
     document.querySelectorAll('.tab-button').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -153,9 +154,7 @@ function renderHeroQuests() {
     attachQuestHandlers(container);
 }
 
-// ============================================
 // МОДАЛКА КВЕСТА
-// ============================================
 function setupQuestModal() {
     const modal = document.getElementById('add-quest-modal');
     const xpSlider = document.getElementById('modal-quest-xp');
@@ -209,9 +208,7 @@ function openQuestModal() {
     setTimeout(() => document.getElementById('modal-quest-title').focus(), 100);
 }
 
-// ============================================
 // СПИСОК КВЕСТОВ
-// ============================================
 function questCardHTML(q) {
     return `
         <div class="quest-card ${q.completed ? 'completed' : ''}" data-id="${q.id}">
@@ -299,9 +296,7 @@ document.getElementById('clear-completed-btn')?.addEventListener('click', () => 
     updateUI();
 });
 
-// ============================================
 // СУНДУК
-// ============================================
 function setupChestModal() {
     document.getElementById('chest-open-btn').addEventListener('click', () => {
         // Закрываем сундук, показываем награду
@@ -366,9 +361,7 @@ function openChestModal() {
     if (chest) chest.classList.add('chest-shake');
 }
 
-// ============================================
 // КАСТОМИЗАЦИЯ
-// ============================================
 function setupCustomization() {
     document.getElementById('hero-name-input').addEventListener('input', e => {
         DM.settings.heroName = e.target.value.toUpperCase() || '2B';
@@ -526,9 +519,7 @@ function updateCustomizationUI() {
     rmBtn.style.display = DM.settings.customMascot ? 'block' : 'none';
 }
 
-// ============================================
 // UI
-// ============================================
 function updateUI() {
     document.getElementById('hero-level').textContent = DM.level;
     document.getElementById('hero-name').textContent = DM.settings.heroName;
@@ -558,9 +549,7 @@ function updateSpeech(custom = null) {
     speech.textContent = msg;
 }
 
-// ============================================
 // LEVEL UP
-// ============================================
 function setupLevelUp() {
     window.onLevelUp = () => {
         document.getElementById('levelup-modal').style.display = 'flex';

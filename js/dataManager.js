@@ -96,9 +96,7 @@ class DataManager {
         }
     }
     
-    // ============================================
     // НАГРАДЫ
-    // ============================================
     
     // Открыть сундук: возвращает объект награды
     openChest() {
@@ -149,7 +147,6 @@ class DataManager {
         return this.unlockedBackgrounds.includes(id);
     }
     
-    // ============================================
     
     getProgress() {
         if (this.quests.length === 0) return 0;
