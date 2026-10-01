@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <base href="/pixel-quest/">
+    <base href="./">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a1e">
     <title>Pixel Quest ⚔️</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="css/pixel-quest.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
@@ -267,7 +267,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(()=>{});
+            navigator.serviceWorker.register('./sw.js').catch(()=>{});
         });
     }
 </script>

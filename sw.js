@@ -1,13 +1,15 @@
-const CACHE_VERSION = 'pixel-quest-v5';
+const CACHE_VERSION = 'pixel-quest-v6';
 const urlsToCache = [
-    '/', '/index.html',
-    '/css/pixel-quest.css',
-    '/js/soundEngine.js',
-    '/js/medals.js',
-    '/js/mascot.js',
-    '/js/dataManager.js',
-    '/js/animations.js',
-    '/js/app.js'
+    './',
+    './index.html',
+    './manifest.json',
+    './css/pixel-quest.css',
+    './js/soundEngine.js',
+    './js/medals.js',
+    './js/mascot.js',
+    './js/dataManager.js',
+    './js/animations.js',
+    './js/app.js'
 ];
 
 self.addEventListener('install', e => {
